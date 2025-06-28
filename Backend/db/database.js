@@ -75,7 +75,7 @@ function logError(tableName) {
     if (err) {
       console.error(`❌ Error creating ${tableName} table:`, err.message);
     } else {
-      console.log(`✅ ${tableName} table ready.`);
+      console.log(` ${tableName} table ready.`);
     }
   };
 }
