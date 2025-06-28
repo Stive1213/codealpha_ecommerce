@@ -16,8 +16,11 @@ db.run(`
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL);
-    `, logError('Users'));
+        password TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'buyer',
+        request_seller INTEGER DEFAULT 0
+    );
+`, logError('Users'));
 
 db.run(`
   CREATE TABLE IF NOT EXISTS products (
