@@ -48,7 +48,7 @@ function Signup() {
       requestSeller
     }).then(() => {
       setSuccessMessage('Registered successfully! Redirecting...');
-      setTimeout(() => navigate('/signin'), 1500); // Delay so user can see message
+      setTimeout(() => navigate('/signin'), 1500); 
     }).catch(() => {
       setServerError('Signup failed. Email may already be used.');
     }).finally(() => {
