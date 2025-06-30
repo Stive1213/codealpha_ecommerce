@@ -1,29 +1,27 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-const bcrypt = require('bcrypt');
 
 const dbPath = path.resolve(__dirname, 'ecommerce.db');
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
-        console.error('❌ Failed to connect to db:', err.message);
+        console.error('failed to connect to db:', err.message);
+
     } else {
-        console.log('✅ Connected to SQLite database');
+        console.log('connected to sqlie database');
     }
 });
 
-// USERS TABLE
 db.run(`
-  CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      email TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL,
-      role TEXT NOT NULL DEFAULT 'buyer',
-      request_seller INTEGER DEFAULT 0
-  );
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'buyer',
+        request_seller INTEGER DEFAULT 0
+    );
 `, logError('Users'));
 
-// PRODUCTS TABLE
 db.run(`
   CREATE TABLE IF NOT EXISTS products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,42 +69,13 @@ db.run(`
   );
 `, logError('Order Items'));
 
-// Admin user insertion
-const adminEmail = 'admin@example.com';
-const adminPassword = 'admin123';
-
-bcrypt.hash(adminPassword, 10, (err, hashedPassword) => {
-  if (err) {
-    console.error('❌ Error hashing admin password:', err.message);
-  } else {
-    db.get('SELECT * FROM users WHERE email = ?', [adminEmail], (err, row) => {
-      if (err) {
-        console.error('❌ Error checking for existing admin:', err.message);
-      } else if (!row) {
-        db.run(`
-          INSERT INTO users (name, email, password, role)
-          VALUES (?, ?, ?, ?)
-        `, ['Admin', adminEmail, hashedPassword, 'admin'], (err) => {
-          if (err) {
-            console.error('❌ Failed to insert admin:', err.message);
-          } else {
-            console.log(`✅ Admin user added (email: ${adminEmail})`);
-          }
-        });
-      } else {
-        console.log('ℹ️ Admin user already exists. Skipping insert.');
-      }
-    });
-  }
-});
-
-// Error logger function
+// Reusable error logger
 function logError(tableName) {
   return (err) => {
     if (err) {
       console.error(`❌ Error creating ${tableName} table:`, err.message);
     } else {
-      console.log(`✅ ${tableName} table ready.`);
+      console.log(` ${tableName} table ready.`);
     }
   };
 }

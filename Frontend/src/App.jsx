@@ -5,6 +5,8 @@ import BuyerDashboard from './pages/buyer/BuyerDashboard';
 import SellerDashboard from './pages/seller/SellerDashboard';
 import Waitlist from './pages/seller/Waitlist';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import PendingSellers from './pages/admin/PendingSellers';
+import AllUsers from './pages/admin/AllUsers';
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/seller/dashboard" element={<SellerDashboard />} />
         <Route path="/seller/waiting-approval" element={<Waitlist />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/pending-sellers" element={<PendingSellers />} />
+        <Route path="/admin/all-users" element={<AllUsers />} />
 
         {/* Optional default route */}
         <Route path="*" element={<Signin />} /> {/* fallback to signin instead of signup */}

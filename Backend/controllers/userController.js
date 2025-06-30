@@ -108,9 +108,43 @@ const approveSeller = (req, res) => {
     return res.status(200).json({ message: 'Seller approved successfully' });
   });
 };
+// ---------------------------
+// Get Pending Seller Requests
+// ---------------------------
+const getPendingSellers = (req, res) => {
+  const query = `SELECT id, name, email, role FROM users WHERE role = 'pending_seller'`;
+
+  db.all(query, [], (err, rows) => {
+    if (err) {
+      console.error('❌ Error fetching pending sellers:', err.message);
+      return res.status(500).json({ message: 'Failed to retrieve pending sellers' });
+    }
+
+    return res.status(200).json({ sellers: rows });
+  });
+};
+
+// ---------------------------
+// Get All Users
+// ---------------------------
+const getAllUsers = (req, res) => {
+  const query = `SELECT id, name, email, role FROM users`;
+
+  db.all(query, [], (err, rows) => {
+    if (err) {
+      console.error('❌ Error fetching all users:', err.message);
+      return res.status(500).json({ message: 'Failed to retrieve users' });
+    }
+
+    return res.status(200).json({ users: rows });
+  });
+};
+
 
 module.exports = {
   registerUser,
   loginUser,
-  approveSeller
+  approveSeller,
+  getPendingSellers,
+  getAllUsers
 };
