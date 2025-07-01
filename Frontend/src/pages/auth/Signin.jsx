@@ -14,13 +14,29 @@ function Signin() {
 
     axios.post('http://localhost:5000/users/login', { email, password })
       .then(res => {
-        const { role } = res.data.user;
+        const { user, token } = res.data;
 
-        if (role === 'buyer') navigate('/buyer/dashboard');
-        else if (role === 'seller') navigate('/seller/dashboard');
-        else if (role === 'pending_seller') navigate('/seller/waiting-approval');
-        else if (role === 'admin') navigate('/admin/dashboard');
-        else navigate('/');
+        // ✅ Store the user ID and optional token
+        localStorage.setItem('userId', user.id);
+        if (token) localStorage.setItem('token', token);
+
+        // ✅ Redirect based on role
+        switch (user.role) {
+          case 'buyer':
+            navigate('/buyer/dashboard');
+            break;
+          case 'seller':
+            navigate('/seller/dashboard');
+            break;
+          case 'pending_seller':
+            navigate('/seller/waiting-approval');
+            break;
+          case 'admin':
+            navigate('/admin/dashboard');
+            break;
+          default:
+            navigate('/');
+        }
       })
       .catch(() => {
         setError('Invalid email or password');

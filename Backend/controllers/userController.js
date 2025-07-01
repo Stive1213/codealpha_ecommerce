@@ -1,6 +1,6 @@
 const db = require('../db/database');
 const bcrypt = require('bcrypt');
-
+const jwt = require('jsonwebtoken');
 // ---------------------------
 // Register a New User
 // ---------------------------
@@ -68,6 +68,17 @@ const loginUser = (req, res) => {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 
+      // ✅ Generate JWT
+      const token = jwt.sign(
+        {
+          id: user.id,
+          name: user.name,
+          role: user.role
+        },
+        'your_jwt_secret', // 🔐 Replace with env variable in production
+        { expiresIn: '2h' }
+      );
+
       return res.status(200).json({
         message: 'Login successful',
         user: {
@@ -75,7 +86,8 @@ const loginUser = (req, res) => {
           name: user.name,
           email: user.email,
           role: user.role
-        }
+        },
+        token // ✅ Send token to frontend
       });
     } catch (error) {
       console.error('❌ Password check error:', error.message);
