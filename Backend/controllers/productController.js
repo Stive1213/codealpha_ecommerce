@@ -1,10 +1,35 @@
 const db = require('../db/database');
 
 // ---------------------------
+// Get All Products (Public for Buyers)
+// ---------------------------
+const getAllProducts = (req, res) => {
+  const query = `SELECT * FROM products`;
+  db.all(query, [], (err, rows) => {
+    if (err) return res.status(500).json({ message: 'Failed to fetch products' });
+    res.json({ products: rows });
+  });
+};
+const getProductById = (req, res) => {
+  const { id } = req.params;
+  const query = 'SELECT * FROM products WHERE id = ?';
+
+  db.get(query, [id], (err, row) => {
+    if (err) {
+      console.error('❌ Error fetching product by ID:', err.message);
+      return res.status(500).json({ message: 'Failed to fetch product' });
+    }
+    if (!row) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json({ product: row });
+  });
+};
+// ---------------------------
 // Get Products for Logged-in Seller
 // ---------------------------
 const getSellerProducts = (req, res) => {
-  const sellerId = req.headers['x-user-id']; // we'll send this from frontend
+  const sellerId = req.headers['x-user-id'];
 
   const query = `SELECT * FROM products WHERE seller_id = ?`;
   db.all(query, [sellerId], (err, rows) => {
@@ -57,6 +82,7 @@ const deleteProduct = (req, res) => {
     res.json({ message: 'Product deleted' });
   });
 };
+
 // ---------------------------
 // Get Seller Orders
 // ---------------------------
@@ -85,10 +111,13 @@ const getSellerOrders = (req, res) => {
     res.status(200).json({ orders: rows });
   });
 };
+
 module.exports = {
+  getAllProducts,     // ✅ Added
   getSellerProducts,
   addProduct,
   updateProduct,
   deleteProduct,
-  getSellerOrders
+  getSellerOrders,
+  getProductById
 };

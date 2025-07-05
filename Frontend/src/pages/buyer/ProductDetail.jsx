@@ -5,24 +5,40 @@ import axios from 'axios';
 function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [error, setError] = useState(null);
 
   const userId = localStorage.getItem('userId');
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/products/${id}`)
-      .then(res => setProduct(res.data.product))
-      .catch(err => console.error('Error fetching product:', err));
+    axios
+      .get(`http://localhost:5000/products/${id}`)
+      .then((res) => setProduct(res.data.product))
+      .catch((err) => {
+        console.error('Error fetching product:', err);
+        setError('Failed to load product');
+      });
   }, [id]);
 
   const addToCart = () => {
-    axios.post('http://localhost:5000/cart/add', {
-      userId,
-      productId: id,
-      quantity: 1
-    }).then(() => alert('Added to cart!'))
-      .catch(err => console.error('Failed to add to cart', err));
+    if (!userId) {
+      setError('Please log in to add items to your cart');
+      return;
+    }
+
+    axios
+      .post('http://localhost:5000/cart/add', {
+        userId,
+        productId: id,
+        quantity: 1,
+      })
+      .then(() => alert('Added to cart!'))
+      .catch((err) => {
+        console.error('Failed to add to cart:', err);
+        setError(err.response?.data?.message || 'Failed to add to cart');
+      });
   };
 
+  if (error) return <div className="text-red-600 p-6">{error}</div>;
   if (!product) return <div>Loading...</div>;
 
   return (

@@ -16,14 +16,13 @@ function Signin() {
       .then(res => {
         const { user, token } = res.data;
 
-        // ✅ Store the user ID and optional token
         localStorage.setItem('userId', user.id);
         if (token) localStorage.setItem('token', token);
 
-        // ✅ Redirect based on role
+        // ✅ Redirect based on user role
         switch (user.role) {
           case 'buyer':
-            navigate('/buyer/dashboard');
+            navigate('/buyer/products'); // Updated redirect
             break;
           case 'seller':
             navigate('/seller/dashboard');
@@ -60,11 +59,7 @@ function Signin() {
           value={password}
           onChange={e => setPassword(e.target.value)}
         />
-
-        {error && (
-          <p className="text-red-500 mb-2 text-center">{error}</p>
-        )}
-
+        {error && <p className="text-red-500 mb-2 text-center">{error}</p>}
         <button
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
           type="submit"
