@@ -14,7 +14,8 @@ app.use(express.json());
 
 const userRoutes = require('./routes/users');
 const productRoutes = require('./routes/products');
-
+const buyerRoutes = require('./routes/buyer');
+app.use('/buyer', buyerRoutes);
 app.use('/users', userRoutes);
 app.use('/products', productRoutes);
 
