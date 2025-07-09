@@ -57,59 +57,64 @@ function Signup() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-4 bg-white rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          className="mb-2 w-full border p-2"
-          placeholder="Name"
-          value={name}
-          onChange={e => setName(e.target.value)}
-        />
-        {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 px-4">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 transition-all duration-300">
+        <h2 className="text-3xl font-extrabold text-center text-gray-800 dark:text-white mb-6">Sign Up</h2>
 
-        <input
-          className="mb-2 w-full border p-2"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-        {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-
-        <input
-          type="password"
-          className="mb-2 w-full border p-2"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-        {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-
-        <label className="block mb-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            type="checkbox"
-            checked={requestSeller}
-            onChange={(e) => setRequestSeller(e.target.checked)}
-            className="mr-2"
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+            placeholder="Name"
+            value={name}
+            onChange={e => setName(e.target.value)}
           />
-          I want to become a seller
-        </label>
+          {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
 
-        {serverError && <p className="text-red-500 mb-2 text-center">{serverError}</p>}
-        {successMessage && <p className="text-green-500 mb-2 text-center">{successMessage}</p>}
+          <input
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
 
-        <button
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'Submitting...' : 'Register'}
-        </button>
+          <input
+            type="password"
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+          />
+          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
 
-        <p className="mt-4 text-center">
+          <label className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">
+            <input
+              type="checkbox"
+              checked={requestSeller}
+              onChange={(e) => setRequestSeller(e.target.checked)}
+              className="accent-blue-600 w-4 h-4"
+            />
+            <span>I want to become a seller</span>
+          </label>
+
+          {serverError && <p className="text-red-500 text-center text-sm">{serverError}</p>}
+          {successMessage && <p className="text-green-500 text-center text-sm">{successMessage}</p>}
+
+          <button
+            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-300 disabled:opacity-70"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Register'}
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-gray-600 dark:text-gray-400 text-sm">
           Already have an account?{' '}
-          <Link to="/signin" className="text-blue-500 hover:underline">Sign In</Link>
+          <Link to="/signin" className="text-blue-500 hover:underline font-medium">
+            Sign In
+          </Link>
         </p>
-      </form>
+      </div>
     </div>
   );
 }

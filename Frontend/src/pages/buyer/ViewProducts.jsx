@@ -13,17 +13,27 @@ function ViewProducts() {
   }, []);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Available Products</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 px-4 py-10">
+      <h1 className="text-3xl font-bold text-center text-white mb-10">Available Products</h1>
+
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {products.map(product => (
-          <div key={product.id} className="border p-4 rounded">
-            <img src={product.image} alt={product.name} className="h-40 w-full object-cover mb-2" />
-            <h2 className="text-lg font-semibold">{product.name}</h2>
-            <p>${product.price}</p>
+          <div
+            key={product.id}
+            className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-5 flex flex-col items-center transition-transform hover:scale-105"
+          >
+            <img
+              src={product.image}
+              alt={product.name}
+              className="h-48 w-full object-cover rounded-lg mb-4"
+            />
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-1 text-center">
+              {product.name}
+            </h2>
+            <p className="text-blue-600 dark:text-blue-400 font-medium mb-4">${product.price}</p>
             <button
               onClick={() => navigate(`/buyer/product/${product.id}`)}
-              className="mt-2 bg-blue-500 text-white px-3 py-1 rounded"
+              className="mt-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-300"
             >
               View Details
             </button>

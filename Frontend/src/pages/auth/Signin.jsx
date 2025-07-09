@@ -19,10 +19,9 @@ function Signin() {
         localStorage.setItem('userId', user.id);
         if (token) localStorage.setItem('token', token);
 
-        // ✅ Redirect based on user role
         switch (user.role) {
           case 'buyer':
-            navigate('/buyer/products'); // Updated redirect
+            navigate('/buyer/products');
             break;
           case 'seller':
             navigate('/seller/dashboard');
@@ -43,37 +42,41 @@ function Signin() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-4 bg-white rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-4 text-center">Sign In</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          className="mb-2 w-full border p-2"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          className="mb-2 w-full border p-2"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-        {error && <p className="text-red-500 mb-2 text-center">{error}</p>}
-        <button
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-          type="submit"
-        >
-          Sign In
-        </button>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 px-4">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 transition-all duration-300">
+        <h2 className="text-3xl font-extrabold text-center text-gray-800 dark:text-white mb-6">Sign In</h2>
 
-        <p className="mt-4 text-center">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+          />
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+          <button
+            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-300"
+            type="submit"
+          >
+            Sign In
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-gray-600 dark:text-gray-400 text-sm">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-blue-500 hover:underline">
+          <Link to="/signup" className="text-blue-500 hover:underline font-medium">
             Sign Up
           </Link>
         </p>
-      </form>
+      </div>
     </div>
   );
 }

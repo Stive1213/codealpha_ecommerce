@@ -21,6 +21,7 @@ function SellerDashboard() {
       setProducts(res.data.products);
     } catch (err) {
       console.error('❌ Error fetching products:', err.message);
+      alert('Failed to fetch products');
     }
   };
 
@@ -49,14 +50,18 @@ function SellerDashboard() {
       fetchProducts();
     } catch (err) {
       console.error(`❌ Error ${editingId ? 'updating' : 'adding'} product:`, err.message);
+      alert(`Failed to ${editingId ? 'update' : 'add'} product`);
     }
   };
 
-  // Delete product
+  // Delete product (updated headers & error handling)
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/products/delete/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'x-user-id': userId
+        }
       });
       if (editingId === id) {
         setEditingId(null);
@@ -64,7 +69,8 @@ function SellerDashboard() {
       }
       fetchProducts();
     } catch (err) {
-      console.error('❌ Error deleting product:', err.message);
+      console.error('❌ Error deleting product:', err.response?.data?.message || err.message);
+      alert(`Failed to delete product: ${err.response?.data?.message || 'Unknown error'}`);
     }
   };
 
