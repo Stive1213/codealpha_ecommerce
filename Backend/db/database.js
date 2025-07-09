@@ -35,6 +35,32 @@ db.run(`
   FOREIGN KEY(seller_id) REFERENCES users(id)
   );
 `, logError('Products'));
+// Add seller_id column to products table if it doesn't exist
+db.get(`PRAGMA table_info(products);`, (err, columns) => {
+  if (err) {
+    console.error('❌ Error reading table info:', err.message);
+    return;
+  }
+  // Check if seller_id column exists
+  db.all(`PRAGMA table_info(products);`, (err, cols) => {
+    if (err) {
+      console.error('❌ Error fetching columns:', err.message);
+      return;
+    }
+    const hasSellerId = cols.some(col => col.name === 'seller_id');
+    if (!hasSellerId) {
+      db.run(`ALTER TABLE products ADD COLUMN seller_id INTEGER;`, (err) => {
+        if (err) {
+          console.error('❌ Failed to add seller_id column:', err.message);
+        } else {
+          console.log('✅ seller_id column added to products table');
+        }
+      });
+    } else {
+      console.log('ℹ️ seller_id column already exists in products table');
+    }
+  });
+});
 
 // CART ITEMS TABLE
 db.run(`

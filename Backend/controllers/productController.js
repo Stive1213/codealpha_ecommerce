@@ -10,6 +10,7 @@ const getAllProducts = (req, res) => {
     res.json({ products: rows });
   });
 };
+
 const getProductById = (req, res) => {
   const { id } = req.params;
   const query = 'SELECT * FROM products WHERE id = ?';
@@ -25,6 +26,7 @@ const getProductById = (req, res) => {
     res.json({ product: row });
   });
 };
+
 // ---------------------------
 // Get Products for Logged-in Seller
 // ---------------------------
@@ -53,33 +55,57 @@ const addProduct = (req, res) => {
 };
 
 // ---------------------------
-// Update Product
+// Update Product (with ownership check)
 // ---------------------------
 const updateProduct = (req, res) => {
   const { id } = req.params;
   const { name, description, price, image } = req.body;
+  const sellerId = req.headers['x-user-id'];
 
-  const query = `
-    UPDATE products
-    SET name = ?, description = ?, price = ?, image = ?
-    WHERE id = ?
-  `;
-  db.run(query, [name, description, price, image, id], function (err) {
-    if (err) return res.status(500).json({ message: 'Failed to update product' });
-    res.json({ message: 'Product updated' });
+  // Check ownership first
+  const checkQuery = `SELECT seller_id FROM products WHERE id = ?`;
+  db.get(checkQuery, [id], (err, row) => {
+    if (err) return res.status(500).json({ message: 'Database error' });
+    if (!row) return res.status(404).json({ message: 'Product not found' });
+    if (row.seller_id != sellerId) {
+      return res.status(403).json({ message: 'Unauthorized: Not your product' });
+    }
+
+    // Proceed to update
+    const updateQuery = `
+      UPDATE products
+      SET name = ?, description = ?, price = ?, image = ?
+      WHERE id = ?
+    `;
+    db.run(updateQuery, [name, description, price, image, id], function (err) {
+      if (err) return res.status(500).json({ message: 'Failed to update product' });
+      res.json({ message: 'Product updated' });
+    });
   });
 };
 
 // ---------------------------
-// Delete Product
+// Delete Product (with ownership check)
 // ---------------------------
 const deleteProduct = (req, res) => {
   const { id } = req.params;
+  const sellerId = req.headers['x-user-id'];
 
-  const query = `DELETE FROM products WHERE id = ?`;
-  db.run(query, [id], function (err) {
-    if (err) return res.status(500).json({ message: 'Failed to delete product' });
-    res.json({ message: 'Product deleted' });
+  // Check ownership first
+  const checkQuery = `SELECT seller_id FROM products WHERE id = ?`;
+  db.get(checkQuery, [id], (err, row) => {
+    if (err) return res.status(500).json({ message: 'Database error' });
+    if (!row) return res.status(404).json({ message: 'Product not found' });
+    if (row.seller_id != sellerId) {
+      return res.status(403).json({ message: 'Unauthorized: Not your product' });
+    }
+
+    // Proceed to delete
+    const deleteQuery = `DELETE FROM products WHERE id = ?`;
+    db.run(deleteQuery, [id], function (err) {
+      if (err) return res.status(500).json({ message: 'Failed to delete product' });
+      res.json({ message: 'Product deleted' });
+    });
   });
 };
 
@@ -113,7 +139,7 @@ const getSellerOrders = (req, res) => {
 };
 
 module.exports = {
-  getAllProducts,     // ✅ Added
+  getAllProducts,
   getSellerProducts,
   addProduct,
   updateProduct,

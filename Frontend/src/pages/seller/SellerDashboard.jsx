@@ -5,7 +5,6 @@ function SellerDashboard() {
   const [products, setProducts] = useState([]);
   const [form, setForm] = useState({ name: '', description: '', price: '', image: '' });
   const [editingId, setEditingId] = useState(null); // Track editing product ID
-  const [orders, setOrders] = useState([]);
 
   const token = localStorage.getItem('token');
   const userId = localStorage.getItem('userId');
@@ -22,21 +21,6 @@ function SellerDashboard() {
       setProducts(res.data.products);
     } catch (err) {
       console.error('❌ Error fetching products:', err.message);
-    }
-  };
-
-  // Fetch orders for seller's products
-  const fetchOrders = async () => {
-    try {
-      const res = await axios.get('http://localhost:5000/products/orders', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'x-user-id': userId
-        }
-      });
-      setOrders(res.data.orders);
-    } catch (err) {
-      console.error('❌ Error fetching orders:', err.message);
     }
   };
 
@@ -103,7 +87,6 @@ function SellerDashboard() {
 
   useEffect(() => {
     fetchProducts();
-    fetchOrders();
   }, []);
 
   return (
@@ -167,7 +150,13 @@ function SellerDashboard() {
             <h3 className="text-lg font-bold">{product.name}</h3>
             <p>{product.description}</p>
             <p className="text-green-600 font-semibold">${product.price}</p>
-            {product.image && <img src={product.image} alt="" className="h-32 object-cover mt-2" />}
+            {product.image && (
+              <img
+                src={product.image}
+                alt={product.name}
+                className="h-32 object-cover mt-2 rounded"
+              />
+            )}
             <div className="mt-2 space-x-2">
               <button
                 onClick={() => handleEdit(product)}
@@ -184,43 +173,6 @@ function SellerDashboard() {
             </div>
           </div>
         ))}
-      </div>
-
-      <h2 className="text-xl font-semibold mb-2">Orders for Your Products</h2>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white rounded shadow">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="p-2">Order ID</th>
-              <th className="p-2">Buyer</th>
-              <th className="p-2">Product</th>
-              <th className="p-2">Qty</th>
-              <th className="p-2">Price</th>
-              <th className="p-2">Status</th>
-              <th className="p-2">Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order, index) => (
-              <tr key={index} className="border-t">
-                <td className="p-2">{order.order_id}</td>
-                <td className="p-2">{order.buyer_name} ({order.buyer_email})</td>
-                <td className="p-2">{order.product_name}</td>
-                <td className="p-2">{order.quantity}</td>
-                <td className="p-2">${order.price}</td>
-                <td className="p-2 capitalize">{order.status}</td>
-                <td className="p-2">{new Date(order.created_at).toLocaleString()}</td>
-              </tr>
-            ))}
-            {orders.length === 0 && (
-              <tr>
-                <td colSpan="7" className="text-center p-4 text-gray-500">
-                  No orders found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
       </div>
     </div>
   );
