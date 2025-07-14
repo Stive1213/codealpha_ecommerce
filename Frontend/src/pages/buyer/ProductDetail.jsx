@@ -6,12 +6,16 @@ function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
   const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     axios
       .get(`http://localhost:5000/buyer/products/${id}`)
-      .then((res) => setProduct(res.data.product))
+      .then((res) => {
+        setProduct(res.data.product);
+        setError(null);
+      })
       .catch((err) => {
         console.error('Error fetching product:', err);
         setError('Failed to load product');
@@ -30,14 +34,19 @@ function ProductDetail() {
         productId: id,
         quantity: 1,
       })
-      .then(() => alert('Added to cart!'))
+      .then(() => {
+        setSuccessMessage('Added to cart!');
+        setError(null);
+        setTimeout(() => setSuccessMessage(''), 3000); // clear after 3s
+      })
       .catch((err) => {
         console.error('Failed to add to cart:', err);
         setError(err.response?.data?.message || 'Failed to add to cart');
+        setSuccessMessage('');
       });
   };
 
-  if (error) {
+  if (error && !product) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 flex items-center justify-center text-red-500 text-lg font-medium">
         {error}
@@ -63,7 +72,10 @@ function ProductDetail() {
         />
         <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">{product.name}</h1>
         <p className="text-xl text-blue-600 dark:text-blue-400 font-semibold mb-4">${product.price}</p>
-        <p className="text-gray-700 dark:text-gray-300 mb-6">{product.description}</p>
+        <p className="text-gray-700 dark:text-gray-300 mb-4">{product.description}</p>
+
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
 
         <button
           onClick={addToCart}

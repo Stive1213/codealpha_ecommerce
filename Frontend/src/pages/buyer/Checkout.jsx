@@ -8,6 +8,7 @@ function Checkout() {
 
   const [cartItems, setCartItems] = useState([]);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     if (!userId) {
@@ -16,7 +17,10 @@ function Checkout() {
     }
 
     axios.get(`http://localhost:5000/buyer/cart/${userId}`)
-      .then(res => setCartItems(res.data.cart))
+      .then(res => {
+        setCartItems(res.data.cart);
+        setError('');
+      })
       .catch(err => {
         console.error('Failed to load cart:', err);
         setError('Failed to load cart');
@@ -26,12 +30,14 @@ function Checkout() {
   const handleCheckout = () => {
     axios.post('http://localhost:5000/buyer/orders/place', { userId })
       .then(() => {
-        alert('Order placed successfully!');
-        navigate('/buyer/products');
+        setSuccessMessage('Order placed successfully!');
+        setError('');
+        setTimeout(() => navigate('/buyer/products'), 2000); // Wait 2s before redirect
       })
       .catch(err => {
         console.error('Checkout failed:', err);
         setError('Checkout failed');
+        setSuccessMessage('');
       });
   };
 
@@ -40,9 +46,10 @@ function Checkout() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 px-4 py-10 flex items-center justify-center">
       <div className="max-w-2xl w-full bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 text-gray-800 dark:text-white">
-        <h1 className="text-3xl font-bold text-center mb-8">Confirm Your Order</h1>
+        <h1 className="text-3xl font-bold text-center mb-6">Confirm Your Order</h1>
 
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {successMessage && <p className="text-green-500 text-center mb-4">{successMessage}</p>}
 
         {cartItems.length === 0 ? (
           <p className="text-center text-gray-600 dark:text-gray-400">Your cart is empty.</p>
