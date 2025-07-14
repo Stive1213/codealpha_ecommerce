@@ -6,28 +6,36 @@ function ViewCart() {
   const userId = localStorage.getItem('userId');
   const [cart, setCart] = useState([]);
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
   const fetchCart = () => {
     if (!userId) {
-      setError('User not logged in');
+      setError('User not logged in.');
       return;
     }
 
     axios.get(`http://localhost:5000/buyer/cart/${userId}`)
-      .then(res => setCart(res.data.cart))
+      .then(res => {
+        setCart(res.data.cart);
+        setError('');
+      })
       .catch(err => {
-        console.error('Failed to load cart:', err);
-        setError('Failed to load cart');
+        console.error('Cart load error:', err);
+        setError('Failed to load cart.');
       });
   };
 
   const removeItem = (itemId) => {
     axios.delete(`http://localhost:5000/buyer/cart/remove/${itemId}`)
-      .then(() => fetchCart())
+      .then(() => {
+        fetchCart();
+        setMessage('Item removed successfully.');
+        setTimeout(() => setMessage(''), 3000); // Clear after 3 seconds
+      })
       .catch(err => {
-        console.error('Failed to remove item:', err);
-        setError('Failed to remove item');
+        console.error('Remove item error:', err);
+        setError('Failed to remove item.');
       });
   };
 
@@ -46,7 +54,13 @@ function ViewCart() {
       <div className="max-w-3xl mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8">
         <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">Your Cart</h1>
 
-        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+        {error && (
+          <p className="text-center text-red-500 mb-4">{error}</p>
+        )}
+
+        {message && (
+          <p className="text-center text-green-500 mb-4">{message}</p>
+        )}
 
         {cart.length === 0 ? (
           <p className="text-center text-gray-600 dark:text-gray-400">Your cart is empty.</p>

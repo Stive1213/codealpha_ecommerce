@@ -4,17 +4,28 @@ import axios from 'axios';
 
 function ViewProducts() {
   const [products, setProducts] = useState([]);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     axios.get('http://localhost:5000/products')
-      .then(res => setProducts(res.data.products))
-      .catch(err => console.error('Error fetching products:', err));
+      .then(res => {
+        setProducts(res.data.products);
+        setError('');
+      })
+      .catch(err => {
+        console.error('Error fetching products:', err);
+        setError('Failed to load products. Please try again later.');
+      });
   }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-800 px-4 py-10">
-      <h1 className="text-3xl font-bold text-center text-white mb-10">Available Products</h1>
+      <h1 className="text-3xl font-bold text-center text-white mb-6">Available Products</h1>
+
+      {error && (
+        <p className="text-center text-red-500 mb-6">{error}</p>
+      )}
 
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {products.map(product => (
